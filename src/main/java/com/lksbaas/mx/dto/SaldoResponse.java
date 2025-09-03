@@ -1,33 +1,26 @@
-package com.lksbaas.mx.model;
+package com.lksbaas.mx.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class SaldoMTCenter {
-
+@Data
+public class SaldoResponse {
     @JsonProperty("fecha_hora")
     private String fechaHora;
-
     @JsonProperty("codigo_respuesta")
     private Integer codigoRespuesta;
-
     @JsonProperty("descripcion_respuesta")
     private String descripcionRespuesta;
+    private Float saldo;
 
-    private Double saldo;
+    public SaldoResponse(){}
 
-    // ============ CONSTRUCTORES ============
-
-    public SaldoMTCenter(){}
-
-    public SaldoMTCenter(String fechaHora, Integer codigoRespuesta,
-                         String descripcionRespuesta, Double saldo) {
+    public SaldoResponse(String fechaHora, Integer codigoRespuesta, String descripcionRespuesta, Float saldo) {
         this.fechaHora = fechaHora;
         this.codigoRespuesta = codigoRespuesta;
         this.descripcionRespuesta = descripcionRespuesta;
         this.saldo = saldo;
     }
-
-    // ============ GETTERS Y SETTERS ============
 
     public String getFechaHora() {
         return fechaHora;
@@ -45,19 +38,19 @@ public class SaldoMTCenter {
         this.codigoRespuesta = codigoRespuesta;
     }
 
+    public Float getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(Float saldo) {
+        this.saldo = saldo;
+    }
+
     public String getDescripcionRespuesta() {
         return descripcionRespuesta;
     }
 
     public void setDescripcionRespuesta(String descripcionRespuesta) {
         this.descripcionRespuesta = descripcionRespuesta;
-    }
-
-    public Double getSaldo() {
-        return saldo;
-    }
-
-    public void setSaldo(Double saldo) {
-        this.saldo = saldo;
     }
 }

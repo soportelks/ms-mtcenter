@@ -1,20 +1,18 @@
-package com.lksbaas.mx.model;
+package com.lksbaas.mx.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class SaldoRequest {
     @JsonProperty("fecha_hora")
     private String fechaHora;
 
-    // ============ CONSTRUCTORES ============
-
-    public SaldoRequest() {}
+    public SaldoRequest(){}
 
     public SaldoRequest(String fechaHora) {
         this.fechaHora = fechaHora;
     }
-
-    // ============ GETTERS Y SETTERS ============
 
     public String getFechaHora() {
         return fechaHora;

@@ -1,60 +1,34 @@
-
-package com.lksbaas.mx.model;
+package com.lksbaas.mx.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class ConsultaRecarga {
-
-    // ============ CAMPOS DE ENTRADA (REQUEST) ============
+@Data
+public class ConsultaRecargaResponse {
     private String telefono;
     private String sku;
-
-    @JsonProperty("no_transaccion_recarga")
-    private Integer noTransaccionRecarga;
-
-    @JsonProperty("fecha_hora_recarga")
-    private String fechaHoraRecarga;
-
     @JsonProperty("no_transaccion")
     private Integer noTransaccion;
-
     @JsonProperty("fecha_hora")
     private String fechaHora;
-
-    // ============ CAMPOS DE RESPUESTA (RESPONSE) ============
-
     @JsonProperty("codigo_respuesta")
     private Integer codigoRespuesta;
-
     @JsonProperty("descripcion_respuesta")
     private String descripcionRespuesta;
-
     @JsonProperty("no_autorizacion")
     private Integer noAutorizacion;
-
     private String instruccion1;
-
     private String instruccion2;
-
     @JsonProperty("fecha_hora_solicitud")
     private String fechaHoraSolicitud;
-
     @JsonProperty("fecha_hora_respuesta")
     private String fechaHoraRespuesta;
 
-    // ============ CONSTRUCTORES ============
+    public ConsultaRecargaResponse(){}
 
-    public ConsultaRecarga(){}
-
-    public ConsultaRecarga(String telefono, String sku, Integer noTransaccionRecarga,
-                           String fechaHoraRecarga, Integer noTransaccion, String fechaHora,
-                           Integer codigoRespuesta, String descripcionRespuesta,
-                           Integer noAutorizacion, String instruccion1, String instruccion2,
-                           String fechaHoraSolicitud, String fechaHoraRespuesta) {
+    public ConsultaRecargaResponse(String telefono, String sku, Integer noTransaccion, String fechaHora, Integer codigoRespuesta, String descripcionRespuesta, Integer noAutorizacion, String instruccion1, String instruccion2, String fechaHoraSolicitud, String fechaHoraRespuesta) {
         this.telefono = telefono;
         this.sku = sku;
-        this.noTransaccionRecarga = noTransaccionRecarga;
-        this.fechaHoraRecarga = fechaHoraRecarga;
         this.noTransaccion = noTransaccion;
         this.fechaHora = fechaHora;
         this.codigoRespuesta = codigoRespuesta;
@@ -65,8 +39,6 @@ public class ConsultaRecarga {
         this.fechaHoraSolicitud = fechaHoraSolicitud;
         this.fechaHoraRespuesta = fechaHoraRespuesta;
     }
-
-    // ============ GETTERS Y SETTERS ============
 
     public String getTelefono() {
         return telefono;
@@ -82,22 +54,6 @@ public class ConsultaRecarga {
 
     public void setSku(String sku) {
         this.sku = sku;
-    }
-
-    public Integer getNoTransaccionRecarga() {
-        return noTransaccionRecarga;
-    }
-
-    public void setNoTransaccionRecarga(Integer noTransaccionRecarga) {
-        this.noTransaccionRecarga = noTransaccionRecarga;
-    }
-
-    public String getFechaHoraRecarga() {
-        return fechaHoraRecarga;
-    }
-
-    public void setFechaHoraRecarga(String fechaHoraRecarga) {
-        this.fechaHoraRecarga = fechaHoraRecarga;
     }
 
     public Integer getNoTransaccion() {
