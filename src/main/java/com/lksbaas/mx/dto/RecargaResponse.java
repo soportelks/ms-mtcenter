@@ -1,57 +1,37 @@
-package com.lksbaas.mx.model;
+package com.lksbaas.mx.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class RecargaInternacional {
-
-    // ============ CAMPOS DE ENTRADA (REQUEST) ============
+@Data
+public class RecargaResponse {
     private String telefono;
-    private Double importe;
-
+    private Float importe;
+    @JsonProperty("no_transaccion")
+    private Integer noTransaccion;
+    @JsonProperty("fecha_hora")
+    private String fechaHora;
+    @JsonProperty("codigo_respuesta")
+    private Integer codigoRespuesta;
+    @JsonProperty("descripcion_respuesta")
+    private String descripcionRespuesta;
+    @JsonProperty("no_autorizacion")
+    private Integer noAutorizacion;
+    @JsonProperty("fecha_hora_solicitud")
+    private String fechaHoraSolicitud;
+    @JsonProperty("fecha_hora_respuesta")
+    private String fechaHoraRespuesta;
+    private String sku;
     @JsonProperty("country_code")
     private String countryCode;
-
     @JsonProperty("mobile_country_code")
     private String mobileCountryCode;
 
-    private String sku;
+    public RecargaResponse(){}
 
-    @JsonProperty("no_transaccion")
-    private Integer noTransaccion;
-
-    @JsonProperty("fecha_hora")
-    private String fechaHora;
-
-    // ============ CAMPOS DE RESPUESTA (RESPONSE) ============
-
-    @JsonProperty("codigo_respuesta")
-    private Integer codigoRespuesta;
-
-    @JsonProperty("descripcion_respuesta")
-    private String descripcionRespuesta;
-
-    @JsonProperty("no_autorizacion")
-    private Integer noAutorizacion;
-
-    @JsonProperty("fecha_hora_solicitud")
-    private String fechaHoraSolicitud;
-
-    @JsonProperty("fecha_hora_respuesta")
-    private String fechaHoraRespuesta;
-
-    // ============ CONSTRUCTORES ============
-
-    public RecargaInternacional(){}
-
-    public RecargaInternacional(String telefono, String countryCode, Double importe,
-                                String mobileCountryCode, String sku, Integer noTransaccion,
-                                String fechaHora, Integer codigoRespuesta, String descripcionRespuesta,
-                                Integer noAutorizacion, String fechaHoraSolicitud, String fechaHoraRespuesta) {
+    public RecargaResponse(String telefono, Float importe, Integer noTransaccion, String fechaHora, Integer codigoRespuesta, String descripcionRespuesta, Integer noAutorizacion, String fechaHoraSolicitud, String fechaHoraRespuesta, String sku, String countryCode, String mobileCountryCode) {
         this.telefono = telefono;
-        this.countryCode = countryCode;
         this.importe = importe;
-        this.mobileCountryCode = mobileCountryCode;
-        this.sku = sku;
         this.noTransaccion = noTransaccion;
         this.fechaHora = fechaHora;
         this.codigoRespuesta = codigoRespuesta;
@@ -59,9 +39,10 @@ public class RecargaInternacional {
         this.noAutorizacion = noAutorizacion;
         this.fechaHoraSolicitud = fechaHoraSolicitud;
         this.fechaHoraRespuesta = fechaHoraRespuesta;
+        this.sku = sku;
+        this.countryCode = countryCode;
+        this.mobileCountryCode = mobileCountryCode;
     }
-
-    // ============ GETTERS Y SETTERS ============
 
     public String getTelefono() {
         return telefono;
@@ -71,36 +52,12 @@ public class RecargaInternacional {
         this.telefono = telefono;
     }
 
-    public Double getImporte() {
+    public Float getImporte() {
         return importe;
     }
 
-    public void setImporte(Double importe) {
+    public void setImporte(Float importe) {
         this.importe = importe;
-    }
-
-    public String getCountryCode() {
-        return countryCode;
-    }
-
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
-    }
-
-    public String getMobileCountryCode() {
-        return mobileCountryCode;
-    }
-
-    public void setMobileCountryCode(String mobileCountryCode) {
-        this.mobileCountryCode = mobileCountryCode;
-    }
-
-    public String getSku() {
-        return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
     }
 
     public Integer getNoTransaccion() {
@@ -157,5 +114,29 @@ public class RecargaInternacional {
 
     public void setFechaHoraRespuesta(String fechaHoraRespuesta) {
         this.fechaHoraRespuesta = fechaHoraRespuesta;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public String getMobileCountryCode() {
+        return mobileCountryCode;
+    }
+
+    public void setMobileCountryCode(String mobileCountryCode) {
+        this.mobileCountryCode = mobileCountryCode;
     }
 }

@@ -1,27 +1,21 @@
+package com.lksbaas.mx.dto;
 
-package com.lksbaas.mx.model;
-
-public class MTCenterAuthRequest {
+public class AuthRequest {
     private Integer cadena;
     private Integer establecimiento;
     private Integer terminal;
     private Integer cajero;
     private String clave;
 
-    // ============ CONSTRUCTORES ============
+    public AuthRequest(){}
 
-    public MTCenterAuthRequest(){}
-
-    public MTCenterAuthRequest(Integer cadena, Integer establecimiento, Integer terminal,
-                               Integer cajero, String clave) {
+    public AuthRequest(Integer cadena, Integer establecimiento, Integer terminal, Integer cajero, String clave) {
         this.cadena = cadena;
         this.establecimiento = establecimiento;
         this.terminal = terminal;
         this.cajero = cajero;
         this.clave = clave;
     }
-
-    // ============ GETTERS Y SETTERS ============
 
     public Integer getCadena() {
         return cadena;

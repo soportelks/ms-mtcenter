@@ -1,8 +1,8 @@
-package com.lksbaas.mx.model;
+package com.lksbaas.mx.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class MTCenterAuthResponse {
+public class AuthResponse {
     private String token;
     @JsonProperty("token_type")
     private String tokenType;
@@ -13,20 +13,15 @@ public class MTCenterAuthResponse {
     @JsonProperty("mensajeRespuesta")
     private String mensajeRespuesta;
 
-    // ============ CONSTRUCTORES ============
+    public AuthResponse(){}
 
-    public MTCenterAuthResponse(){}
-
-    public MTCenterAuthResponse(String token, String tokenType, String expiresIn,
-                                Integer codigoRespuesta, String mensajeRespuesta) {
+    public AuthResponse(String token, String tokenType, String expiresIn, Integer codigoRespuesta, String mensajeRespuesta) {
         this.token = token;
         this.tokenType = tokenType;
         this.expiresIn = expiresIn;
         this.codigoRespuesta = codigoRespuesta;
         this.mensajeRespuesta = mensajeRespuesta;
     }
-
-    // ============ GETTERS Y SETTERS ============
 
     public String getToken() {
         return token;
