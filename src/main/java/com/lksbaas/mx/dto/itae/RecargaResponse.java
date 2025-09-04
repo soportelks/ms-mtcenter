@@ -1,12 +1,12 @@
-package com.lksbaas.mx.dto;
+package com.lksbaas.mx.dto.itae;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ConsultaRecargaResponse {
+public class RecargaResponse {
     private String telefono;
-    private String sku;
+    private Float importe;
     @JsonProperty("no_transaccion")
     private Integer noTransaccion;
     @JsonProperty("fecha_hora")
@@ -17,27 +17,31 @@ public class ConsultaRecargaResponse {
     private String descripcionRespuesta;
     @JsonProperty("no_autorizacion")
     private Integer noAutorizacion;
-    private String instruccion1;
-    private String instruccion2;
     @JsonProperty("fecha_hora_solicitud")
     private String fechaHoraSolicitud;
     @JsonProperty("fecha_hora_respuesta")
     private String fechaHoraRespuesta;
+    private String sku;
+    @JsonProperty("country_code")
+    private String countryCode;
+    @JsonProperty("mobile_country_code")
+    private String mobileCountryCode;
 
-    public ConsultaRecargaResponse(){}
+    public RecargaResponse(){}
 
-    public ConsultaRecargaResponse(String telefono, String sku, Integer noTransaccion, String fechaHora, Integer codigoRespuesta, String descripcionRespuesta, Integer noAutorizacion, String instruccion1, String instruccion2, String fechaHoraSolicitud, String fechaHoraRespuesta) {
+    public RecargaResponse(String telefono, Float importe, Integer noTransaccion, String fechaHora, Integer codigoRespuesta, String descripcionRespuesta, Integer noAutorizacion, String fechaHoraSolicitud, String fechaHoraRespuesta, String sku, String countryCode, String mobileCountryCode) {
         this.telefono = telefono;
-        this.sku = sku;
+        this.importe = importe;
         this.noTransaccion = noTransaccion;
         this.fechaHora = fechaHora;
         this.codigoRespuesta = codigoRespuesta;
         this.descripcionRespuesta = descripcionRespuesta;
         this.noAutorizacion = noAutorizacion;
-        this.instruccion1 = instruccion1;
-        this.instruccion2 = instruccion2;
         this.fechaHoraSolicitud = fechaHoraSolicitud;
         this.fechaHoraRespuesta = fechaHoraRespuesta;
+        this.sku = sku;
+        this.countryCode = countryCode;
+        this.mobileCountryCode = mobileCountryCode;
     }
 
     public String getTelefono() {
@@ -48,12 +52,12 @@ public class ConsultaRecargaResponse {
         this.telefono = telefono;
     }
 
-    public String getSku() {
-        return sku;
+    public Float getImporte() {
+        return importe;
     }
 
-    public void setSku(String sku) {
-        this.sku = sku;
+    public void setImporte(Float importe) {
+        this.importe = importe;
     }
 
     public Integer getNoTransaccion() {
@@ -96,22 +100,6 @@ public class ConsultaRecargaResponse {
         this.noAutorizacion = noAutorizacion;
     }
 
-    public String getInstruccion1() {
-        return instruccion1;
-    }
-
-    public void setInstruccion1(String instruccion1) {
-        this.instruccion1 = instruccion1;
-    }
-
-    public String getInstruccion2() {
-        return instruccion2;
-    }
-
-    public void setInstruccion2(String instruccion2) {
-        this.instruccion2 = instruccion2;
-    }
-
     public String getFechaHoraSolicitud() {
         return fechaHoraSolicitud;
     }
@@ -126,5 +114,29 @@ public class ConsultaRecargaResponse {
 
     public void setFechaHoraRespuesta(String fechaHoraRespuesta) {
         this.fechaHoraRespuesta = fechaHoraRespuesta;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public String getMobileCountryCode() {
+        return mobileCountryCode;
+    }
+
+    public void setMobileCountryCode(String mobileCountryCode) {
+        this.mobileCountryCode = mobileCountryCode;
     }
 }
