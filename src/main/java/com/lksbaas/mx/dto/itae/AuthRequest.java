@@ -1,4 +1,4 @@
-package com.lksbaas.mx.dto;
+package com.lksbaas.mx.dto.itae;
 
 public class AuthRequest {
     private Integer cadena;

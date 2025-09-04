@@ -1,6 +1,6 @@
-package com.lksbaas.mx.service;
+package com.lksbaas.mx.service.itae;
 
-import com.lksbaas.mx.dto.*;
+import com.lksbaas.mx.dto.itae.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
-public class MTCenterService {
+public class MTCenterItaeService {
 
     private final WebClient webClient;
-    private static final Logger log = LoggerFactory.getLogger(MTCenterService.class);
+    private static final Logger log = LoggerFactory.getLogger(MTCenterItaeService.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    public MTCenterService(WebClient webClient) {
+    public MTCenterItaeService(WebClient webClient) {
         this.webClient = webClient;
     }
 

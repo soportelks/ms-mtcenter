@@ -1,7 +1,7 @@
-package com.lksbaas.mx.controller;
+package com.lksbaas.mx.controller.itae;
 
-import com.lksbaas.mx.dto.*;
-import com.lksbaas.mx.service.MTCenterService;
+import com.lksbaas.mx.dto.itae.*;
+import com.lksbaas.mx.service.itae.MTCenterItaeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +12,14 @@ import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/api/mtcenter")
-public class MTCenterController {
+public class MTCenterItaeController {
 
-    private final MTCenterService mtCenterService;
-    private static final Logger log = LoggerFactory.getLogger(MTCenterController.class);
+    private final MTCenterItaeService mtCenterService;
+    private static final Logger log = LoggerFactory.getLogger(MTCenterItaeController.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     // Constructor con inyección de dependencia
-    public MTCenterController(MTCenterService mtCenterService) {
+    public MTCenterItaeController(MTCenterItaeService mtCenterService) {
         this.mtCenterService = mtCenterService;
     }
 
