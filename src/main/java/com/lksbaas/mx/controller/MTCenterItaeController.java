@@ -1,7 +1,7 @@
-package com.lksbaas.mx.controller.itae;
+package com.lksbaas.mx.controller;
 
 import com.lksbaas.mx.dto.itae.*;
-import com.lksbaas.mx.service.itae.MTCenterItaeService;
+import com.lksbaas.mx.service.MTCenterItaeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

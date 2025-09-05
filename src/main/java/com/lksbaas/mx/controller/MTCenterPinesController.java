@@ -1,7 +1,7 @@
-package com.lksbaas.mx.controller.pines;
+package com.lksbaas.mx.controller;
 
 import com.lksbaas.mx.dto.pines.*;
-import com.lksbaas.mx.service.pines.MTCenterPinesService;
+import com.lksbaas.mx.service.MTCenterPinesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,6 @@ public class MTCenterPinesController {
     private static final Logger log = LoggerFactory.getLogger(MTCenterPinesController.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    // Constructor con inyección de dependencia
     public MTCenterPinesController(MTCenterPinesService mtCenterService) {
         this.mtCenterService = mtCenterService;
     }
@@ -99,7 +98,7 @@ public class MTCenterPinesController {
     @PostMapping("/consulta-recarga-reintentos")
     public ResponseEntity<?> consultarRecargaConReintentos(@RequestBody ConsultaRecargaRequest request,
                                                            @RequestHeader("Authorization") String authHeader,
-                                                           @RequestParam(defaultValue = "3") int maxIntentos) {
+                                                           @RequestParam(defaultValue = "8") int maxIntentos) {
         try {
             String token = extractToken(authHeader);
             log.info("Consultando recarga con reintentos para transacción: {}, máximo intentos: {}",
