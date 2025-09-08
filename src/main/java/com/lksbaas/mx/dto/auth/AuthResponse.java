@@ -1,4 +1,4 @@
-package com.lksbaas.mx.dto.itae;
+package com.lksbaas.mx.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

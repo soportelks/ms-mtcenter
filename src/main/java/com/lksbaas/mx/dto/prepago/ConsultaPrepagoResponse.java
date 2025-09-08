@@ -1,6 +1,8 @@
 package com.lksbaas.mx.dto.prepago;
 
 public class ConsultaPrepagoResponse {
+    private Integer codigoRespuesta;
+    private String mensajeRespuesta;
     private String referencia1;
     private String sku;
     private Integer no_transaccion;
@@ -14,6 +16,22 @@ public class ConsultaPrepagoResponse {
     private String fecha_hora_respuesta;
 
     public ConsultaPrepagoResponse() {}
+
+    public Integer getCodigoRespuesta() {
+        return codigoRespuesta;
+    }
+
+    public void setCodigoRespuesta(Integer codigoRespuesta) {
+        this.codigoRespuesta = codigoRespuesta;
+    }
+
+    public String getMensajeRespuesta() {
+        return mensajeRespuesta;
+    }
+
+    public void setMensajeRespuesta(String mensajeRespuesta) {
+        this.mensajeRespuesta = mensajeRespuesta;
+    }
 
     public String getReferencia1() {
         return referencia1;

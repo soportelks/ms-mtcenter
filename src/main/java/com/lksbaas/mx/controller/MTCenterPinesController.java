@@ -1,6 +1,9 @@
 package com.lksbaas.mx.controller;
 
+import com.lksbaas.mx.dto.auth.AuthRequest;
+import com.lksbaas.mx.dto.auth.AuthResponse;
 import com.lksbaas.mx.dto.pines.*;
+import com.lksbaas.mx.service.AuthService;
 import com.lksbaas.mx.service.MTCenterPinesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,25 +17,14 @@ import java.time.format.DateTimeFormatter;
 @RequestMapping("/api/mtcenter/pines")
 public class MTCenterPinesController {
 
+    private final AuthService authService;
     private final MTCenterPinesService mtCenterService;
     private static final Logger log = LoggerFactory.getLogger(MTCenterPinesController.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    public MTCenterPinesController(MTCenterPinesService mtCenterService) {
+    public MTCenterPinesController(MTCenterPinesService mtCenterService, AuthService authService) {
         this.mtCenterService = mtCenterService;
-    }
-
-    @PostMapping("/authentication")
-    public ResponseEntity<?> authenticate(@RequestBody AuthRequest request) {
-        try {
-            log.info("Iniciando autenticación para cadena: {}, establecimiento: {}",
-                    request.getCadena(), request.getEstablecimiento());
-            AuthResponse response = mtCenterService.authenticate(request);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Error en autenticación", e);
-            return ResponseEntity.status(500).body("Error al autenticar: " + e.getMessage());
-        }
+        this.authService = authService;
     }
 
     @PostMapping("/recarga")

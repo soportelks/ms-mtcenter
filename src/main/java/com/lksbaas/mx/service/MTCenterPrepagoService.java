@@ -1,5 +1,7 @@
 package com.lksbaas.mx.service;
 
+import com.lksbaas.mx.dto.auth.AuthRequest;
+import com.lksbaas.mx.dto.auth.AuthResponse;
 import com.lksbaas.mx.dto.prepago.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,26 +18,11 @@ public class MTCenterPrepagoService {
     private final WebClient webClient;
     private static final Logger log = LoggerFactory.getLogger(MTCenterPrepagoService.class);
 
-    public MTCenterPrepagoService(WebClient webClient) {
-        this.webClient = webClient;
-    }
+    private final AuthService authService;
 
-    public AuthResponse authenticate(AuthRequest authRequest) {
-        try {
-            return webClient.post()
-                    .uri("/token/authenticate")
-                    .bodyValue(authRequest)
-                    .retrieve()
-                    .bodyToMono(AuthResponse.class)
-                    .retryWhen(Retry.fixedDelay(2, Duration.ofSeconds(1)))
-                    .block();
-        } catch (WebClientResponseException e) {
-            log.error("Error en autenticación: {}", e.getResponseBodyAsString());
-            throw new RuntimeException("Error en autenticación: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Error inesperado en autenticación", e);
-            throw new RuntimeException("Error al autenticar con MTCenter");
-        }
+    public MTCenterPrepagoService(WebClient webClient, AuthService authService) {
+        this.webClient = webClient;
+        this.authService = authService;
     }
 
     public RecargaPrepagoResponse realizarRecargaPrepago(RecargaPrepagoRequest recargaRequest, String token) {
@@ -112,5 +99,41 @@ public class MTCenterPrepagoService {
             log.error("Error inesperado en consulta de productos", e);
             throw new RuntimeException("Error al consultar productos");
         }
+    }
+
+    public ConsultaPrepagoResponse consultarPrepagoConReintentos(ConsultaPrepagoRequest consultaRequest, String token, int maxIntentos) {
+        int intervalo = 5; // segundos entre consultas
+
+        for (int intento = 1; intento <= maxIntentos; intento++) {
+            try {
+                // Esperar antes de la primera consulta (30-40 segundos según manual)
+                if (intento == 1) {
+                    Thread.sleep(30000); // 30 segundos
+                } else {
+                    Thread.sleep(intervalo * 1000);
+                }
+
+                ConsultaPrepagoResponse response = consultarPrepago(consultaRequest, token);
+                Integer codigo = response.getCodigoRespuesta();
+
+                // Según manual Tablas 6-9
+                if (codigo == 0) {
+                    return response; // Transacción exitosa
+                } else if (codigo != -600 && codigo != 71) {
+                    return response; // Error definitivo
+                }
+
+                // Si es -600 o 71, continuar consultando
+                log.info("Consulta {}/{} - Código: {}", intento, maxIntentos, codigo);
+
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Consulta interrumpida");
+            } catch (Exception e) {
+                log.error("Error en consulta {}/{}", intento, maxIntentos, e);
+            }
+        }
+
+        throw new RuntimeException("Transacción no exitosa después de " + maxIntentos + " intentos");
     }
 }

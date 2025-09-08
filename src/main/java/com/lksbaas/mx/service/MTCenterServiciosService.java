@@ -1,5 +1,7 @@
 package com.lksbaas.mx.service;
 
+import com.lksbaas.mx.dto.auth.AuthRequest;
+import com.lksbaas.mx.dto.auth.AuthResponse;
 import com.lksbaas.mx.dto.servicios.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,26 +21,11 @@ public class MTCenterServiciosService {
     private static final Logger log = LoggerFactory.getLogger(MTCenterServiciosService.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    public MTCenterServiciosService(WebClient webClient) {
-        this.webClient = webClient;
-    }
+    private final AuthService authService;
 
-    public AuthResponse authenticate(AuthRequest authRequest) {
-        try {
-            return webClient.post()
-                    .uri("/token/authenticate")
-                    .bodyValue(authRequest)
-                    .retrieve()
-                    .bodyToMono(AuthResponse.class)
-                    .retryWhen(Retry.fixedDelay(2, Duration.ofSeconds(1)))
-                    .block();
-        } catch (WebClientResponseException e) {
-            log.error("Error en autenticación: {}", e.getResponseBodyAsString());
-            throw new RuntimeException("Error en autenticación: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Error inesperado en autenticación", e);
-            throw new RuntimeException("Error al autenticar con MTCenter");
-        }
+    public MTCenterServiciosService(WebClient webClient, AuthService authService) {
+        this.webClient = webClient;
+        this.authService = authService;
     }
 
     public PagoServicioResponse pagarServicio(PagoServicioRequest pagoRequest, String token) {
@@ -186,34 +173,4 @@ public class MTCenterServiciosService {
         return LocalDateTime.now().format(DATE_FORMAT);
     }
 
-    // Métodos de conveniencia para el controlador
-    public PagoServicioResponse pagarServicio(PagoServicioRequest pagoRequest, AuthRequest authRequest) {
-        AuthResponse authResponse = authenticate(authRequest);
-        return pagarServicio(pagoRequest, authResponse.getToken());
-    }
-
-    public ConsultaRecargaResponse consultarServicio(ConsultaRecargaRequest consultaRequest, AuthRequest authRequest) {
-        AuthResponse authResponse = authenticate(authRequest);
-        return consultarServicio(consultaRequest, authResponse.getToken());
-    }
-
-    public ConsultaRecargaResponse consultarServicioConReintentos(ConsultaRecargaRequest consultaRequest, AuthRequest authRequest) {
-        AuthResponse authResponse = authenticate(authRequest);
-        return consultarServicioConReintentos(consultaRequest, authResponse.getToken(), 8); // 8 intentos según manual
-    }
-
-    public ConsultaRecargaResponse consultarReferencia(ConsultaRecargaRequest consultaRequest, AuthRequest authRequest) {
-        AuthResponse authResponse = authenticate(authRequest);
-        return consultarReferencia(consultaRequest, authResponse.getToken());
-    }
-
-    public SaldoResponse consultarSaldo(SaldoRequest saldoRequest, AuthRequest authRequest) {
-        AuthResponse authResponse = authenticate(authRequest);
-        return consultarSaldo(saldoRequest, authResponse.getToken());
-    }
-
-    public ProductosResponse consultarProductos(AuthRequest authRequest) {
-        AuthResponse authResponse = authenticate(authRequest);
-        return consultarProductos(authResponse.getToken());
-    }
 }

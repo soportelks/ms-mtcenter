@@ -1,6 +1,9 @@
 package com.lksbaas.mx.controller;
 
+import com.lksbaas.mx.dto.auth.AuthRequest;
+import com.lksbaas.mx.dto.auth.AuthResponse;
 import com.lksbaas.mx.dto.servicios.*;
+import com.lksbaas.mx.service.AuthService;
 import com.lksbaas.mx.service.MTCenterServiciosService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,31 +13,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/mtcenter")
-@CrossOrigin(origins = "*")
+@RequestMapping("/api/mtcenter/servicios")
 public class MTCenterServiciosController {
 
+    private final AuthService authService;
     private final MTCenterServiciosService mtCenterService;
     private static final Logger log = LoggerFactory.getLogger(MTCenterServiciosController.class);
 
-    public MTCenterServiciosController(MTCenterServiciosService mtCenterService) {
+    public MTCenterServiciosController(MTCenterServiciosService mtCenterService, AuthService authService) {
         this.mtCenterService = mtCenterService;
+        this.authService = authService;
     }
 
-    /**
-     * Endpoint para autenticación y obtención de token
-     * POST /api/mtcenter/authenticate
-     */
-    @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(@RequestBody AuthRequest authRequest) {
-        try {
-            log.info("Autenticando para cadena: {}", authRequest.getCadena());
-            AuthResponse response = mtCenterService.authenticate(authRequest);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Error en autenticación", e);
-            return ResponseEntity.status(500)
-                    .body(Map.of("error", "Error al autenticar con MTCenter", "message", e.getMessage()));
+    private String obtenerToken(AuthRequest authRequest) {
+        AuthResponse authResponse = authService.authenticate(authRequest);
+        if (authResponse != null && authResponse.getToken() != null) {
+            return authResponse.getToken();
+        } else {
+            throw new RuntimeException("No se pudo obtener el token de autenticación");
         }
     }
 
@@ -55,6 +51,9 @@ public class MTCenterServiciosController {
                     (String) requestData.get("clave")
             );
 
+            // Obtener token
+            String token = obtenerToken(authRequest);
+
             // Extraer datos de la recarga
             PagoServicioRequest pagoRequest = new PagoServicioRequest(
                     (String) requestData.get("referencia1"),
@@ -66,7 +65,7 @@ public class MTCenterServiciosController {
             );
 
             log.info("Realizando pago para referencia: {}", pagoRequest.getReferencia1());
-            PagoServicioResponse response = mtCenterService.pagarServicio(pagoRequest, authRequest);
+            PagoServicioResponse response = mtCenterService.pagarServicio(pagoRequest, token);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error en pago de servicio", e);
@@ -92,6 +91,9 @@ public class MTCenterServiciosController {
                     (String) requestData.get("clave")
             );
 
+            // Obtener token
+            String token = obtenerToken(authRequest);
+
             // Extraer datos de la consulta
             ConsultaRecargaRequest consultaRequest = new ConsultaRecargaRequest(
                     (String) requestData.get("referencia1"),
@@ -101,7 +103,7 @@ public class MTCenterServiciosController {
             );
 
             log.info("Consultando servicio para referencia: {}", consultaRequest.getReferencia1());
-            ConsultaRecargaResponse response = mtCenterService.consultarServicio(consultaRequest, authRequest);
+            ConsultaRecargaResponse response = mtCenterService.consultarServicio(consultaRequest, token);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error en consulta de servicio", e);
@@ -127,6 +129,9 @@ public class MTCenterServiciosController {
                     (String) requestData.get("clave")
             );
 
+            // Obtener token
+            String token = obtenerToken(authRequest);
+
             // Extraer datos de la consulta
             ConsultaRecargaRequest consultaRequest = new ConsultaRecargaRequest(
                     (String) requestData.get("referencia1"),
@@ -136,7 +141,7 @@ public class MTCenterServiciosController {
             );
 
             log.info("Consultando servicio con reintentos para referencia: {}", consultaRequest.getReferencia1());
-            ConsultaRecargaResponse response = mtCenterService.consultarServicioConReintentos(consultaRequest, authRequest);
+            ConsultaRecargaResponse response = mtCenterService.consultarServicioConReintentos(consultaRequest, token, 8);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error en consulta de servicio con reintentos", e);
@@ -162,13 +167,16 @@ public class MTCenterServiciosController {
                     (String) requestData.get("clave")
             );
 
+            // Obtener token
+            String token = obtenerToken(authRequest);
+
             // Extraer datos de la consulta
             ConsultaRecargaRequest consultaRequest = new ConsultaRecargaRequest();
             consultaRequest.setReferencia1((String) requestData.get("referencia1"));
             consultaRequest.setSku((String) requestData.get("sku"));
 
             log.info("Consultando referencia: {}", consultaRequest.getReferencia1());
-            ConsultaRecargaResponse response = mtCenterService.consultarReferencia(consultaRequest, authRequest);
+            ConsultaRecargaResponse response = mtCenterService.consultarReferencia(consultaRequest, token);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error en consulta de referencia", e);
@@ -194,13 +202,16 @@ public class MTCenterServiciosController {
                     (String) requestData.get("clave")
             );
 
+            // Obtener token
+            String token = obtenerToken(authRequest);
+
             // Crear request de saldo
             SaldoRequest saldoRequest = new SaldoRequest(
                     (String) requestData.getOrDefault("fecha_hora", mtCenterService.getCurrentDateTime())
             );
 
             log.info("Consultando saldo");
-            SaldoResponse response = mtCenterService.consultarSaldo(saldoRequest, authRequest);
+            SaldoResponse response = mtCenterService.consultarSaldo(saldoRequest, token);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error en consulta de saldo", e);
@@ -226,8 +237,11 @@ public class MTCenterServiciosController {
                     (String) requestData.get("clave")
             );
 
+            // Obtener token
+            String token = obtenerToken(authRequest);
+
             log.info("Consultando productos disponibles");
-            ProductosResponse response = mtCenterService.consultarProductos(authRequest);
+            ProductosResponse response = mtCenterService.consultarProductos(token);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error en consulta de productos", e);

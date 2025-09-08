@@ -1,4 +1,4 @@
-package com.lksbaas.mx.dto.prepago;
+package com.lksbaas.mx.dto.auth;
 
 public class AuthRequest {
     private Integer cadena;
@@ -7,7 +7,7 @@ public class AuthRequest {
     private Integer cajero;
     private String clave;
 
-    public AuthRequest() {}
+    public AuthRequest(){}
 
     public AuthRequest(Integer cadena, Integer establecimiento, Integer terminal, Integer cajero, String clave) {
         this.cadena = cadena;

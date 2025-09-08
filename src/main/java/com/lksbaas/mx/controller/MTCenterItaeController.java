@@ -1,6 +1,7 @@
 package com.lksbaas.mx.controller;
 
 import com.lksbaas.mx.dto.itae.*;
+import com.lksbaas.mx.service.AuthService;
 import com.lksbaas.mx.service.MTCenterItaeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,30 +12,20 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @RestController
-@RequestMapping("/api/mtcenter")
+@RequestMapping("/api/mtcenter/itae")
 public class MTCenterItaeController {
 
+    private final AuthService authService;
     private final MTCenterItaeService mtCenterService;
     private static final Logger log = LoggerFactory.getLogger(MTCenterItaeController.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     // Constructor con inyección de dependencia
-    public MTCenterItaeController(MTCenterItaeService mtCenterService) {
+    public MTCenterItaeController(MTCenterItaeService mtCenterService, AuthService authService) {
         this.mtCenterService = mtCenterService;
+        this.authService = authService;
     }
 
-    @PostMapping("/authentication")
-    public ResponseEntity<?> authenticate(@RequestBody AuthRequest request) {
-        try {
-            log.info("Iniciando autenticación para cadena: {}, establecimiento: {}",
-                    request.getCadena(), request.getEstablecimiento());
-            AuthResponse response = mtCenterService.authenticate(request);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Error en autenticación", e);
-            return ResponseEntity.status(500).body("Error al autenticar: " + e.getMessage());
-        }
-    }
 
     @PostMapping("/recarga")
     public ResponseEntity<?> realizarRecarga(@RequestBody RecargaRequest request,

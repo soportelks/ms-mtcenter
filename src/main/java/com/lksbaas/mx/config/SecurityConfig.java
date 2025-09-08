@@ -27,7 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/auth/**",
                         "/onboarding/**",
                         "/otp/**",
-                        "/api/mtcenter/**")
+                        "/api/mtcenter/**",
+                        "/api/auth/**")
                 .permitAll()
                 .anyRequest().authenticated();
     }
