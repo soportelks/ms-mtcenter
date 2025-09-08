@@ -1,5 +1,7 @@
 package com.lksbaas.mx.service;
 
+import com.lksbaas.mx.dto.auth.AuthRequest;
+import com.lksbaas.mx.dto.auth.AuthResponse;
 import com.lksbaas.mx.dto.pines.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,26 +21,11 @@ public class MTCenterPinesService {
     private static final Logger log = LoggerFactory.getLogger(MTCenterPinesService.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    public MTCenterPinesService(WebClient webClient) {
-        this.webClient = webClient;
-    }
+    private final AuthService authService;
 
-    public AuthResponse authenticate(AuthRequest credencial) {
-        try {
-            return webClient.post()
-                    .uri("/token/authenticate")
-                    .bodyValue(credencial)
-                    .retrieve()
-                    .bodyToMono(AuthResponse.class)
-                    .retryWhen(Retry.fixedDelay(2, Duration.ofSeconds(1)))
-                    .block();
-        } catch (WebClientResponseException e) {
-            log.error("Error en autenticación: {}", e.getResponseBodyAsString());
-            throw new RuntimeException("Error en autenticación: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Error inesperado en autenticación", e);
-            throw new RuntimeException("Error al autenticar con MTCenter");
-        }
+    public MTCenterPinesService(WebClient webClient, AuthService authService) {
+        this.webClient = webClient;
+        this.authService = authService;
     }
 
     public RecargaResponse recargarPin(RecargaRequest recarga, String token) {
@@ -123,48 +110,43 @@ public class MTCenterPinesService {
     }
 
     // Método para realizar consultas con retry según el manual
+    // En MTCenterPinesService
     public ConsultaRecargaResponse consultarRecargaConReintentos(ConsultaRecargaRequest consulta, String token, int maxIntentos) {
-        int intentos = 0;
+        int intervalo = 5; // segundos entre consultas
+        int tiempoTotal = 60; // segundos totales
 
-        while (intentos < maxIntentos) {
+        for (int intento = 1; intento <= maxIntentos; intento++) {
             try {
-                if (intentos > 0) {
-                    Thread.sleep(5000);
+                // Esperar antes de la primera consulta (30-40 segundos según manual)
+                if (intento == 1) {
+                    Thread.sleep(30000); // 30 segundos
+                } else {
+                    Thread.sleep(intervalo * 1000);
                 }
 
                 ConsultaRecargaResponse response = consultarRecarga(consulta, token);
+                Integer codigo = response.getCodigoRespuesta();
 
-                // Según el manual: códigos -600 y 71 requieren seguir consultando
-                if (response.getCodigoRespuesta() != null) {
-                    Integer codigo = response.getCodigoRespuesta();
-
-                    // Si es 0 (exitosa), terminar
-                    if (codigo == 0) {
-                        return response;
-                    }
-
-                    // Si es -600 o 71, continuar consultando
-                    if (codigo != -600 && codigo != 71) {
-                        // Cualquier otro código, terminar (transacción no exitosa)
-                        return response;
-                    }
+                // Según manual Tablas 6-9
+                if (codigo == 0) {
+                    return response; // Transacción exitosa
+                } else if (codigo != -600 && codigo != 71) {
+                    return response; // Error definitivo
                 }
 
-                intentos++;
-                log.info("Consulta {}/{} - Código: {}", intentos, maxIntentos, response.getCodigoRespuesta());
+                // Si es -600 o 71, continuar consultando
+                log.info("Consulta {}/{} - Código: {}", intento, maxIntentos, codigo);
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException("Consulta interrumpida");
             } catch (Exception e) {
-                log.error("Error en consulta {}/{}", intentos + 1, maxIntentos, e);
-                if (intentos == maxIntentos - 1) {
-                    throw new RuntimeException("Se agotaron los intentos de consulta", e);
-                }
+                log.error("Error en consulta {}/{}", intento, maxIntentos, e);
             }
         }
 
-        throw new RuntimeException("Se agotaron los intentos de consulta");
+        // Si llegamos aquí, todas las consultas devolvieron -600 o 71
+        throw new RuntimeException("Transacción no exitosa después de " + maxIntentos + " intentos");
     }
 
     // Método de conveniencia para consultar saldo actual

@@ -1,5 +1,7 @@
 package com.lksbaas.mx.service;
 
+import com.lksbaas.mx.dto.auth.AuthRequest;
+import com.lksbaas.mx.dto.auth.AuthResponse;
 import com.lksbaas.mx.dto.itae.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,26 +21,11 @@ public class MTCenterItaeService {
     private static final Logger log = LoggerFactory.getLogger(MTCenterItaeService.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    public MTCenterItaeService(WebClient webClient) {
-        this.webClient = webClient;
-    }
+    private final AuthService authService;
 
-    public AuthResponse authenticate(AuthRequest request) {
-        try {
-            return webClient.post()
-                    .uri("/token/authenticate")
-                    .bodyValue(request)
-                    .retrieve()
-                    .bodyToMono(AuthResponse.class)
-                    .retryWhen(Retry.fixedDelay(2, Duration.ofSeconds(1)))
-                    .block();
-        } catch (WebClientResponseException e) {
-            log.error("Error en autenticación: {}", e.getResponseBodyAsString());
-            throw new RuntimeException("Error en autenticación: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Error inesperado en autenticación", e);
-            throw new RuntimeException("Error al autenticar con MTCenter");
-        }
+    public MTCenterItaeService(WebClient webClient, AuthService authService) {
+        this.webClient = webClient;
+        this.authService = authService;
     }
 
     public RecargaResponse realizarRecarga(RecargaRequest request, String token) {
